@@ -17,6 +17,10 @@
     <li class="nav-item">
             <a class="nav-link"  data-toggle="tab" href="#pastReq" role="tab" aria-controls="profile" aria-selected="false">Past requests</a>
     </li>
+    
+    <li class="nav-item">
+        <a class="nav-link"  data-toggle="tab" href="#trip" role="tab" aria-controls="profile" aria-selected="false">Today's trip</a>
+    </li>
     <li class="nav-item">
       <a href="/logout">
         <a class="nav-link" href="/admin" role="link" aria-controls="contact" aria-selected="false">Logout</a>
@@ -103,6 +107,12 @@
         
               </tbody>
             </table>
+      </div>
+      
+      <div class="tab-pane fade" id="trip" role="tabpanel">
+        <% requestsToday.forEach(request=>{ %>
+        <%= request.address %> <br>
+        <% }) %>
       </div>
       <div class="tab-pane fade" id="pastReq" role="tabpanel">
 

@@ -9,6 +9,11 @@ const session = require("express-session");
 const passportLocalMongoose = require("passport-local-mongoose");
 const _ = require("lodash");
 
+const rxl = require("routexl-client")({
+    username: 'Kucumber',
+    password: '12345'
+  });
+
 const FBO_OIL_RATE_PER_LITRE_UPTO_100 = 4;
 const FBO_OIL_RATE_PER_LITRE_UPTO_200 = 4.25;
 const FBO_OIL_RATE_PER_LITRE_UPTO_500 = 4.75;
@@ -49,19 +54,15 @@ mongoose.connect("mongodb://localhost:27017/chemicalx"); //connects to mongodb
 
 const userSchema =new mongoose.Schema({
     fboNumber : String,
+    coordinates:{
+        lat:String,
+        long:String
+    },
     mobNumber : String,
     addr1: String,
     addr2: String,
     pincode: String,
-    username : String,
-    requests : [{
-        oilAmount : Number,
-        dateOfPickup : Date,
-        dateOfRequest:Date,
-        assignedFactory : String,
-        assignedFactoryName: String,
-        status : String
-    }]
+    username : String
 });
 
 
@@ -81,6 +82,10 @@ const factorySchema = new mongoose.Schema({
 const requestSchema = new mongoose.Schema({
         dateOfPickup: Date,
         dateOfRequest:Date,
+        coordinates:{
+            lat:String,
+            long:String
+        },
         oilQuantity: Number,
         fboOilCost: Number,
         factoryOilCost: Number,
@@ -175,7 +180,31 @@ app.get('/admin/user',(req,res)=>{
                 if(err){
                     console.log(err)
                 }else{
-                    res.render('adminUser',{requests:requests,factory:factory});
+                    const Today = new Date();
+                    let requestsToday = [];
+                    /* requestsToday.push({
+                        address: request.addr1 + request.addr2,
+                        lat: request.coordinates.lat,
+                        l
+                    }) */
+                    requests.forEach(request=>{
+                        if(request.dateOfPickup.getDate()==Today.getDate() &&
+                           request.dateOfPickup.getMonth()==Today.getMonth() &&
+                           request.dateOfPickup.getYear()==Today.getYear() &&
+                           !request.expired){
+                               requestsToday.push({
+                                   address: request.addr1 + request.addr2,
+                                   lat:request.coordinates.lat,
+                                   lng:request.coordinates.long
+                               });
+                           }
+                    })
+                    
+                    rxl.tour(requestsToday).then(data=>{
+                        const dataString = JSON.stringify(data);
+                        console.log(dataString);
+                    });
+                    res.render('adminUser',{requests:requests,factory:factory, requestsToday:requestsToday});
                 }
             })
         }
@@ -251,6 +280,10 @@ app.post("/newReq",(req,res)=>{
                                 const oilRequest = new Request({
                                 dateOfPickup: pickupRequest.dateOfPickup,
                                 dateOfRequest:new Date(),
+                                coordinates:{
+                                    lat:req.user.coordinates.lat,
+                                    long:req.user.coordinates.long
+                                },
                                 oilQuantity: pickupRequest.oilAmount,
                                 addr1: req.user.addr1,
                                 addr2: req.user.addr2,
@@ -319,28 +352,50 @@ app.post("/newReq",(req,res)=>{
 
 app.post("/signup",(req,res)=>{
     console.log(req.body);
-    const newUser = {
-        fboNumber : req.body.fboNumber,
-        mobNumber : req.body.phoneNo,
-        addr1: req.body.addr1,
-        addr2: req.body.addr2,
-        pincode: req.body.pinCode,
-        username : req.body.username,
-        password: req.body.password
-    }
-
-    const password = req.body.password;
-
-    User.register(newUser, password , (err,user)=>{
-        if(err){
-            console.log(err);
-            res.redirect("/signup");
-        }else{
-            passport.authenticate("local")(req,res,()=>{
-                res.redirect("/");
-            });
+    
+    options = {
+        uri:"https://maps.googleapis.com/maps/api/geocode/json",
+        qs:{
+            address:req.body.addr1 + req.body.addr2,
+            key:process.env.GOOGLE_API_KEY
         }
-    });
+    };
+
+    request(options,(error,response,body)=>{
+        bodyJSON = JSON.parse(body);
+        console.log(body);
+        console.log(bodyJSON.results[0].geometry.location);
+
+        const newUser = {
+            fboNumber : req.body.fboNumber,
+            coordinates:{
+                lat:bodyJSON.results[0].geometry.location.lat,
+                long:bodyJSON.results[0].geometry.location.lng
+            },
+            mobNumber : req.body.phoneNo,
+            addr1: req.body.addr1,
+            addr2: req.body.addr2,
+            pincode: req.body.pinCode,
+            username : req.body.username,
+            password: req.body.password
+        }
+    
+        
+        const password = req.body.password;
+    
+        User.register(newUser, password , (err,user)=>{
+            if(err){
+                console.log(err);
+                res.redirect("/signup");
+            }else{
+                passport.authenticate("local")(req,res,()=>{
+                    res.redirect("/");
+                });
+            }
+        });
+    })
+    
+    
 });
 
 app.post("/login",(req,res)=>{
