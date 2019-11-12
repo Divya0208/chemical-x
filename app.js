@@ -168,7 +168,7 @@ app.get("/logout",(req,res)=>{
 
 app.get("/admin",(req,res)=>{
     res.render("login",{admin:true});
-})
+});
 
 
 app.get('/admin/user',(req,res)=>{
@@ -226,6 +226,10 @@ app.get('/admin/user',(req,res)=>{
     })
     
     
+});
+
+app.get('/pickupPerson', function(req, res){
+    res.render('ppUser');
 })
 
 //-------------------------
