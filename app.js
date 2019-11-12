@@ -70,8 +70,8 @@ const factorySchema = new mongoose.Schema({
     username:String,
     password:String,
     coordinates:{
-        latitude: String,
-        longitude: String
+        lat: String,
+        lng: String
     },
     name : String,
     addr: String,
@@ -84,7 +84,7 @@ const requestSchema = new mongoose.Schema({
         dateOfRequest:Date,
         coordinates:{
             lat:String,
-            long:String
+            lng:String
         },
         oilQuantity: Number,
         fboOilCost: Number,
@@ -195,7 +195,7 @@ app.get('/admin/user',(req,res)=>{
                                requestsToday.push({
                                    address: request.addr1 + request.addr2,
                                    lat:request.coordinates.lat,
-                                   lng:request.coordinates.long
+                                   lng:request.coordinates.lng
                                });
                            }
                     })
@@ -232,8 +232,8 @@ app.post("/newReq",(req,res)=>{
             const options = {
                 url:"https://maps.googleapis.com/maps/api/distancematrix/json",
                 qs:{
-                    origins:`${req.user.pincode}`,
-                    destinations:`${factory.pinCode}`,
+                    origins:`${req.user.coordinates.lat},${req.user.coordinates.lng}`,
+                    destinations:`${factory.coordinates.lat},${factory.coordinates.lng}`,
                     language:"en-US",
                     key:process.env.GOOGLE_API_KEY
                 },
@@ -282,7 +282,7 @@ app.post("/newReq",(req,res)=>{
                                 dateOfRequest:new Date(),
                                 coordinates:{
                                     lat:req.user.coordinates.lat,
-                                    long:req.user.coordinates.long
+                                    lng:req.user.coordinates.lng
                                 },
                                 oilQuantity: pickupRequest.oilAmount,
                                 addr1: req.user.addr1,
@@ -471,18 +471,18 @@ app.listen(3000, ()=>{
 
 /* 
 
-FACTORY DATA SEEDER
+//FACTORY DATA SEEDER
 
 const factory1 = new Factory({
     username:"ibe@gmail",
     password:"123",
     coordinates:{
-        latitude: "13.286486",
-        longitude: "80.586974"
+        lat: "13.352310",
+        lng: "77.539140"
     },
     name : "Indian BioEnergy",
-    addr: "Concorde Towers, UB City, 1 Vittal Mallya Road, Level 15, Bengaluru, Karnataka",
-    pinCode:"560001",
+    addr: "Nagadenahalli, NH207, Bangalore, Karnataka",
+    pinCode:"561205",
 });
 
 factory1.save(); 
@@ -492,8 +492,8 @@ const factory2 = new Factory({
     username:"abl@gmail",
     password:"123",
     coordinates:{
-        latitude: "17.426637",
-        longitude: "78.449620"
+        lat: "17.426637",
+        lng: "78.449620"
     },
     name : "Advaith Biofuels Limited",
     addr: "Lakshmi Tower, Plot No.13, 1st Floor, ‘A’ Block, Nagarjuna Hills, Punjagutta, Hyderabad, Telangana",
@@ -507,8 +507,8 @@ const factory3 = new Factory({
     username:"abl@gmail",
     password:"123",
     coordinates:{
-        latitude: "12.550086",
-        longitude: "80.079125"
+        lat: "12.550086",
+        lng: "80.079125"
     },
     name : "Yantra Fintech India Ltd",
     addr: "Naduvakkarai, Mullakolathur, Tamil Nadu ",
@@ -521,8 +521,8 @@ const factory4 = new Factory({
     username:"mbpl@gmail",
     password:"123",
     coordinates:{
-        latitude: "19.115750",
-        longitude: "72.854959"
+        lat: "19.115750",
+        lng: "72.854959"
     },
     name : "Muenzer Bharat Private Limited",
     addr : "Kaledonia, Unit 1B, 5th Floor, Sahar Road, Off, Western Express Hwy, Andheri East, Mumbai, Maharashtra",
@@ -536,8 +536,8 @@ const factory5 = new Factory({
     username:"mipl@gmail",
     password:"123",
     coordinates:{
-        latitude: "18.781435",
-        longitude: "73.302256"
+        lat: "18.781435",
+        lng: "73.302256"
     },
     name : "Monopoly Innovations Private Limited",
     addr : "42-45 Emerald Industrial Estate, Dheku, Taluka, Khalapur, Maharashtra",
@@ -552,12 +552,11 @@ const factory6 = new Factory({
     username:"kripl@gmail",
     password:"123",
     coordinates:{
-        latitude: "13.045033",
-        longitude: "80.272129"
+        lat: "13.045033",
+        lng: "80.272129"
     },
     name : "Kaleesuwari Refinery And Industry Private Limited",
     addr : "Phase-III,Industrial Park, Vakalapudi, Kakinada, Andhra Pradesh",
     pinCode:"533005",
 });
-
 factory6.save(); */
