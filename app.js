@@ -56,7 +56,7 @@ const userSchema =new mongoose.Schema({
     fboNumber : String,
     coordinates:{
         lat:String,
-        long:String
+        lng:String
     },
     mobNumber : String,
     addr1: String,
@@ -353,47 +353,33 @@ app.post("/newReq",(req,res)=>{
 app.post("/signup",(req,res)=>{
     console.log(req.body);
     
-    options = {
-        uri:"https://maps.googleapis.com/maps/api/geocode/json",
-        qs:{
-            address:req.body.addr1 + req.body.addr2,
-            key:process.env.GOOGLE_API_KEY
-        }
-    };
+    const newUser = {
+        fboNumber : req.body.fboNumber,
+        coordinates:{
+            lat:req.body.lat,
+            lng:req.body.lng
+        },
+        mobNumber : req.body.phoneNo,
+        addr1: req.body.addr1,
+        addr2: req.body.addr2,
+        pincode: req.body.pinCode,
+        username : req.body.username,
+        password: req.body.password
+    }
 
-    request(options,(error,response,body)=>{
-        bodyJSON = JSON.parse(body);
-        console.log(body);
-        console.log(bodyJSON.results[0].geometry.location);
+    
+    const password = req.body.password;
 
-        const newUser = {
-            fboNumber : req.body.fboNumber,
-            coordinates:{
-                lat:bodyJSON.results[0].geometry.location.lat,
-                long:bodyJSON.results[0].geometry.location.lng
-            },
-            mobNumber : req.body.phoneNo,
-            addr1: req.body.addr1,
-            addr2: req.body.addr2,
-            pincode: req.body.pinCode,
-            username : req.body.username,
-            password: req.body.password
+    User.register(newUser, password , (err,user)=>{
+        if(err){
+            console.log(err);
+            res.redirect("/signup");
+        }else{
+            passport.authenticate("local")(req,res,()=>{
+                res.redirect("/");
+            });
         }
-    
-        
-        const password = req.body.password;
-    
-        User.register(newUser, password , (err,user)=>{
-            if(err){
-                console.log(err);
-                res.redirect("/signup");
-            }else{
-                passport.authenticate("local")(req,res,()=>{
-                    res.redirect("/");
-                });
-            }
-        });
-    })
+    });
     
     
 });
@@ -482,3 +468,18 @@ app.post('/notPickedUp',(req,res)=>{
 app.listen(3000, ()=>{
     console.log("Server running at port 3000");
 })
+
+/* 
+const factory1 = new Factory({
+    username:"ibe@gmail",
+    password:"123",
+    coordinates:{
+        latitude: "13.286486",
+        longitude: "80.586974"
+    },
+    name : "Indian BioEnergy",
+    addr: "Concorde Towers, UB City, 1 Vittal Mallya Road, Level 15, Bengaluru, Karnataka",
+    pinCode:"560001",
+});
+
+factory1.save(); */
