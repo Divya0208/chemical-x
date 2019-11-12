@@ -102,6 +102,15 @@ const requestSchema = new mongoose.Schema({
         expired: Boolean
 })
 
+const ppSchema = new mongoose.Schema({
+        firstName: String,
+        lastName: String,
+        mobNumber: String,
+        addr: String,
+        username: String,
+        assignedFactory: String
+})
+
 userSchema.plugin(passportLocalMongoose);
 
 const User = mongoose.model("userAccount", userSchema);
