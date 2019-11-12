@@ -78,7 +78,7 @@
               </thead>
               <tbody>
 
-                  <% for(let i=0;i<requests.length;i++){%>
+                  <% for(let i=0;i<requests.length;i++){ %>
                       <% if(requests[i].status == 'Accepted' && !requests[i].expired){ %>
                         <tr>
                             <td><%= requests[i].dateOfPickup %></td>
@@ -111,6 +111,25 @@
               
               <div class ="col">
                   <p class="lead text-center px-3">Your Drivers</p>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% for(let i=0; i<driver.length;i++){ %>
+                        <tr>
+                          <td><% drivers[i].firstName + " " drivers[i].lastName %></td>
+                          <td><% drivers[i].username %></td>
+                        </tr>
+                      <% } %>  
+
+
+                    </tbody>
+
+                  </table>
 
               </div>
 
