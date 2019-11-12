@@ -182,11 +182,13 @@ app.get('/admin/user',(req,res)=>{
                 }else{
                     const Today = new Date();
                     let requestsToday = [];
-                    /* requestsToday.push({
-                        address: request.addr1 + request.addr2,
-                        lat: request.coordinates.lat,
-                        l
-                    }) */
+
+                    requestsToday.push({
+                        address: factory.addr,
+                        lat:factory.coordinates.lat,
+                        lng:factory.coordinates.lng,
+                    });
+                    
                     requests.forEach(request=>{
                         if(request.dateOfPickup.getDate()==Today.getDate() &&
                            request.dateOfPickup.getMonth()==Today.getMonth() &&
@@ -198,8 +200,21 @@ app.get('/admin/user',(req,res)=>{
                                    lng:request.coordinates.lng
                                });
                            }
-                    })
+                        requestsToday.push({
+                            address: request.addr1 + request.addr2,
+                            lat:request.coordinates.lat,
+                            lng:request.coordinates.lng
+                        });
+                           
+                    });
+
                     
+                    requestsToday.push({
+                        address: factory.addr,
+                        lat:factory.coordinates.lat,
+                        lng:factory.coordinates.lng,
+                    });
+
                     rxl.tour(requestsToday).then(data=>{
                         const dataString = JSON.stringify(data);
                         console.log(dataString);
