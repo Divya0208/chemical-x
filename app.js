@@ -139,7 +139,7 @@ app.get("/",(req,res)=>{
 });
 
 app.get("/login",(req,res)=>{
-    res.render("login",{admin:false});
+    res.render("login",{admin:2});
 });
 
 app.get("/signup",(req,res)=>{
@@ -176,7 +176,7 @@ app.get("/logout",(req,res)=>{
 
 
 app.get("/admin",(req,res)=>{
-    res.render("login",{admin:true});
+    res.render("login",{admin:1});
 });
 
 
@@ -238,8 +238,9 @@ app.get('/admin/user',(req,res)=>{
 });
 
 app.get('/pickupPerson', function(req, res){
-    res.render('ppUser');
+    res.render("login",{admin:3});
 })
+
 
 //-------------------------
 //------POST REQUESTS------
@@ -408,9 +409,15 @@ app.post("/signup",(req,res)=>{
             });
         }
     });
-    
-    
+        
 });
+
+
+
+app.post("/ppSignup",(req,res)=>{
+    console.log(req.body);
+    
+})
 
 app.post("/login",(req,res)=>{
     passport.authenticate('local')(req,res,()=>{
@@ -497,11 +504,11 @@ app.listen(3000, ()=>{
     console.log("Server running at port 3000");
 })
 
-/* 
+
 
 //FACTORY DATA SEEDER
 
-const factory1 = new Factory({
+/* const factory1 = new Factory({
     username:"ibe@gmail",
     password:"123",
     coordinates:{

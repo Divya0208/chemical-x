@@ -18,7 +18,7 @@
             <a class="nav-link"  data-toggle="tab" href="#pastReq" role="tab" aria-controls="profile" aria-selected="false">Past requests</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link"  data-toggle="tab" href="#trip" role="tab" aria-controls="profile" aria-selected="false">Today's trip</a>
+        <a class="nav-link"  data-toggle="tab" href="#addDriver" role="tab" aria-controls="profile" aria-selected="false">Add driver</a>
     </li>
     <li class="nav-item">
       <a href="/logout">
@@ -104,10 +104,70 @@
             </table>
       </div>
       
-      <div class="tab-pane fade" id="trip" role="tabpanel">
-        <% requestsToday.forEach(request=>{ %>
-        <%= request.address %> <br>
-        <% }) %>
+      <div class="tab-pane fade" id="addDriver" role="tabpanel">
+
+          <div class="content mx-auto">
+              <br />
+              <p class="lead text-center px-3"> Add a new Driver to your factory here.</p>
+              <div class="container-fluid px-10">
+                  <form action="/ppSignup" method="post">
+                    <div class="row mt-2">
+                        <div class="col">
+                            <p class="lead text-left">Name :</p>
+                        </div>
+                    </div>    
+                    <div class="row mt-2">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="First Name" name="firstName" required>
+                        </div>
+                    </div>
+        
+                    <div class="row mt-2">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Last Name" name="lastName">
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col">
+                            <p class="lead text-left">Contact Information :</p>
+                        </div>
+                    </div>
+        
+                    <div class="row mt-2">
+                        <div class="col">
+                            <input type="tel" class="form-control" placeholder="Mobile Number" name="mobNumber" required>
+                        </div>
+                    </div>
+        
+                    <div class="row mt-2">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Address Line 1" name="addr1" required>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Address Line 2" name="addr2" >
+                        </div>
+                    </div>
+        
+                    <div class="row mt-2">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Email" name="username" required>
+        
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-2">
+                            <div class="col">
+                                <input type="submit" class="btn btn-info btn-block" value="Proceed">
+                            </div>
+                    </div>
+                  </form>  
+
+                </div>
+              </div>
+          
       </div>
       <div class="tab-pane fade" id="pastReq" role="tabpanel">
 
