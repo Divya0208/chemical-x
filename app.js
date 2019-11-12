@@ -470,6 +470,9 @@ app.listen(3000, ()=>{
 })
 
 /* 
+
+FACTORY DATA SEEDER
+
 const factory1 = new Factory({
     username:"ibe@gmail",
     password:"123",
@@ -482,4 +485,79 @@ const factory1 = new Factory({
     pinCode:"560001",
 });
 
-factory1.save(); */
+factory1.save(); 
+
+
+const factory2 = new Factory({
+    username:"abl@gmail",
+    password:"123",
+    coordinates:{
+        latitude: "17.426637",
+        longitude: "78.449620"
+    },
+    name : "Advaith Biofuels Limited",
+    addr: "Lakshmi Tower, Plot No.13, 1st Floor, ‘A’ Block, Nagarjuna Hills, Punjagutta, Hyderabad, Telangana",
+    pinCode:"500082",
+});
+
+factory2.save(); 
+
+
+const factory3 = new Factory({
+    username:"abl@gmail",
+    password:"123",
+    coordinates:{
+        latitude: "12.550086",
+        longitude: "80.079125"
+    },
+    name : "Yantra Fintech India Ltd",
+    addr: "Naduvakkarai, Mullakolathur, Tamil Nadu ",
+    pinCode:"603109",
+});
+
+factory3.save();
+
+const factory4 = new Factory({
+    username:"mbpl@gmail",
+    password:"123",
+    coordinates:{
+        latitude: "19.115750",
+        longitude: "72.854959"
+    },
+    name : "Muenzer Bharat Private Limited",
+    addr : "Kaledonia, Unit 1B, 5th Floor, Sahar Road, Off, Western Express Hwy, Andheri East, Mumbai, Maharashtra",
+    pinCode:"400069",
+});
+
+factory4.save();
+
+
+const factory5 = new Factory({
+    username:"mipl@gmail",
+    password:"123",
+    coordinates:{
+        latitude: "18.781435",
+        longitude: "73.302256"
+    },
+    name : "Monopoly Innovations Private Limited",
+    addr : "42-45 Emerald Industrial Estate, Dheku, Taluka, Khalapur, Maharashtra",
+    pinCode:"410203",
+});
+
+factory5.save(); 
+
+
+
+const factory6 = new Factory({
+    username:"kripl@gmail",
+    password:"123",
+    coordinates:{
+        latitude: "13.045033",
+        longitude: "80.272129"
+    },
+    name : "Kaleesuwari Refinery And Industry Private Limited",
+    addr : "Phase-III,Industrial Park, Vakalapudi, Kakinada, Andhra Pradesh",
+    pinCode:"533005",
+});
+
+factory6.save(); */
