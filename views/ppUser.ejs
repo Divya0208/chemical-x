@@ -39,14 +39,16 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
+              
                 <% for(let i=0;i<pickupPerson.requests.length;i++){ %>
+                  <tr>
                   <td> <%= pickupPerson.requests[i].pickUpAddr %>  </td>
                   <td> <%= pickupPerson.requests[i].oilQuantity %>  </td>
                   <td> <%= pickupPerson.requests[i].fboOilCost %>  </td>
                   <td> <%= pickupPerson.requests[i].mobNo %>  </td>
+                  </tr>
                 <% } %>
-              </tr>
+              
            </tbody>
         </table>
     </div>
@@ -54,7 +56,7 @@
     <div class="tab-pane fade" id="optimalRoute" role="tabpanel">
       
     <div id="map-canvas" class="mt-3 px-3"></div>
-    <button id="get">Get Directions</button>
+
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDc8PFFlDfuaGG2RZMbw-iGgWKIVX6ldro&libraries=places"></script>
     </div>
     
@@ -64,6 +66,58 @@
     </div>
   </div>
 </div>
-<script src="/js/optimalRoute.js"></script>
+
+<script>
+let directionDisplay = new google.maps.DirectionsRenderer();
+let directionsService = new google.maps.DirectionsService();
+
+let map;
+
+let requests = <%- JSON.stringify(pickupPerson.requests); %>
+let factoryLat = <%- JSON.stringify(pickupPerson.assignedFactoryCoordinates.lat); %>
+let factoryLng =  <%- JSON.stringify(pickupPerson.assignedFactoryCoordinates.lng); %>
+
+console.log(requests);
+
+let factory = new google.maps.LatLng(factoryLat,factoryLng);
+let waypts = [];
+requests.forEach(request=>{
+  waypts.push({
+    location:`${request.coordinates.lat},${request.coordinates.lng}`
+  })
+})
+
+let mapOptions = {
+    zoom:14,
+    center: factory
+}
+
+map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+directionDisplay.setMap(map);
+
+calculateRoute = () =>{
+    const request = {
+        origin:factory,
+        destination:factory,
+        travelMode:"DRIVING",
+        waypoints: waypts,
+        optimizeWaypoints:true
+    }
+
+    directionsService.route(request,(result,status)=>{
+      console.log(result);
+        if(status=='OK'){
+            directionDisplay.setDirections(result);
+        }
+    })
+    
+}
+
+$('a[href="#optimalRoute"]').on('shown.bs.tab', function (e) {
+    calculateRoute();
+})
+
+</script>
 <%- include('partials/footer',{pageJS:""})%>
 

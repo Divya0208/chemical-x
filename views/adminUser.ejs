@@ -37,6 +37,7 @@
                   <th scope="col">Oil Quantity</th>
                   <th scope="col">Estimated Cost</th>
                   <th scope="col">Address</th>
+                  <th scope="col">Assigned Pick-up Person</th>
                   <th scope="col">Update Status</th>
                 </tr>
               </thead>
@@ -49,6 +50,7 @@
                             <td><%= requests[i].oilQuantity %></td>
                             <td><%= requests[i].factoryOilCost %></td>
                             <td><%= requests[i].addr1 %> <%= requests[i].addr2 %></td>
+                            <td></td>
                             <td>
                               <form method="POST">
                                   <input type="hidden" value="<%= requests[i]._id %>" name="requestId">

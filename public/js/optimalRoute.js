@@ -34,8 +34,7 @@ calculateRoute = () =>{
     })
     
 }
-document.getElementById('optimalRoute').onclick = function(){
-    console.log("Hello");
-    
-calculateRoute();
-}
+
+$('a[href="#optimalRoute"]').on('shown.bs.tab', function (e) {
+    calculateRoute();
+})

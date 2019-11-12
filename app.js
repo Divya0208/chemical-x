@@ -111,6 +111,10 @@ const ppSchema = new mongoose.Schema({
         addr: String,
         username: String,
         assignedFactory: String,
+        assignedFactoryCoordinates:{
+            lat:String,
+            lng:String
+        },
         password:String,
         requests:[{
             dateOfPickup: Date,
@@ -406,21 +410,32 @@ app.post("/signup",(req,res)=>{
 app.post("/ppSignup",(req,res)=>{
     console.log(req.body);
     
-    let newDriver = new PickUpPerson({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        mobNumber: req.body.mobNumber,
-        addr: req.body.addr1 + req.body.addr2,
-        username: req.body.username,
-        assignedFactory: req.body.loggedInFactoryId,
-        password: req.body.username
-    })
-    
-    newDriver.save(err=>{
+    Factory.findById(req.body.loggedInFactoryId,(err,factory)=>{
         if(err){
-            consolee.log(err)
+            console.log(err);
         }else{
-            res.redirect(`/admin/user/?userID=${req.body.loggedInFactoryId}`);
+            
+            let newDriver = new PickUpPerson({
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                mobNumber: req.body.mobNumber,
+                addr: req.body.addr1 + req.body.addr2,
+                username: req.body.username,
+                assignedFactory: req.body.loggedInFactoryId,
+                password: req.body.username,
+                assignedFactoryCoordinates:{
+                    lat:factory.coordinates.lat,
+                    lng:factory.coordinates.lng
+                }
+            })
+    
+            newDriver.save(err=>{
+                if(err){
+                    consolee.log(err)
+                }else{
+                    res.redirect(`/admin/user/?userID=${req.body.loggedInFactoryId}`);
+                }
+            })
         }
     })
 })
