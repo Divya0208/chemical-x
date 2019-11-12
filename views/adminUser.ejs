@@ -109,8 +109,9 @@
           <div class="content mx-auto">
               <br />
               <p class="lead text-center px-3"> Add a new Driver to your factory here.</p>
-              <div class="container-fluid px-10">
+              <div class="container-fluid driverFormWrapper">
                   <form action="/ppSignup" method="post">
+                    <input type="hidden" name="loggedInFactoryId" value=<%= factory._id %>>
                     <div class="row mt-2">
                         <div class="col">
                             <p class="lead text-left">Name :</p>

@@ -1,3 +1,6 @@
+body{
+    padding-bottom:10%;
+}
 .nav-tabs{
     background: #220a37;
 }
@@ -6,6 +9,10 @@
     color: #ffffff;
 }
 
+.driverFormWrapper{
+    padding-left: 10rem;
+    padding-right: 10rem;
+}
 .formWrapper{
     text-align: center;
 }

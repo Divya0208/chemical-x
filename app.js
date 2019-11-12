@@ -116,7 +116,7 @@ userSchema.plugin(passportLocalMongoose);
 const User = mongoose.model("userAccount", userSchema);
 const Factory = mongoose.model('factory',factorySchema);
 const Request = mongoose.model('request',requestSchema);
-
+const PickUpPerson = mongoose.model('pickupPerson',ppSchema);
 passport.use(User.createStrategy());
 
 passport.serializeUser(function(user, done) { //sets user id as cookie in browser
@@ -363,11 +363,7 @@ app.post("/newReq",(req,res)=>{
         }
         
         factories.forEach((factory,index)=>{
-
             requestDistance(factory)
-
-
-            
         })
 
     })
@@ -417,8 +413,38 @@ app.post("/signup",(req,res)=>{
 app.post("/ppSignup",(req,res)=>{
     console.log(req.body);
     
+    let newDriver = new PickUpPerson({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        mobNumber: req.body.mobNumber,
+        addr: req.body.addr1 + req.body.addr2,
+        username: req.body.username,
+        assignedFactory: req.body.loggedInFactoryId,
+        password: req.body.username
+    })
+    
+    newDriver.save(err=>{
+        if(err){
+            consolee.log(err)
+        }else{
+            res.redirect(`/admin/user/?userID=${req.body.loggedInFactoryId}`);
+        }
+    })
 })
 
+app.post("/pickupPerson",(req,res)=>{
+    PickUpPerson.find({username:req.body.username},(err,user)=>{
+        if(user){
+            if(req.body.password == user.password){
+                res.redirect(`/ppUser/?userID=${user._id}`);
+            }else{
+                res.redirect("/pickupPerson");
+            }
+        }else{
+            res.redirect("/pickupPerson");
+        }
+    })
+})
 app.post("/login",(req,res)=>{
     passport.authenticate('local')(req,res,()=>{
         res.redirect(`/user/?userID=${req.user._id}`);
