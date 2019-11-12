@@ -108,7 +108,8 @@ const ppSchema = new mongoose.Schema({
         mobNumber: String,
         addr: String,
         username: String,
-        assignedFactory: String
+        assignedFactory: String,
+        password:String
 })
 
 userSchema.plugin(passportLocalMongoose);
@@ -179,6 +180,11 @@ app.get("/admin",(req,res)=>{
     res.render("login",{admin:1});
 });
 
+app.get("/ppUser",(req,res)=>{
+    PickUpPerson.findById(req.query.userID,(err,user)=>{
+        res.render("ppUser",{pickupPerson:user});
+    })
+})
 
 app.get('/admin/user',(req,res)=>{
     Request.find({assignedFactory:req.query.userID},(err,requests)=>{
@@ -189,46 +195,13 @@ app.get('/admin/user',(req,res)=>{
                 if(err){
                     console.log(err)
                 }else{
-                    const Today = new Date();
-                    let requestsToday = [];
-
-                    requestsToday.push({
-                        address: factory.addr,
-                        lat:factory.coordinates.lat,
-                        lng:factory.coordinates.lng,
-                    });
-                    
-                    requests.forEach(request=>{
-                        if(request.dateOfPickup.getDate()==Today.getDate() &&
-                           request.dateOfPickup.getMonth()==Today.getMonth() &&
-                           request.dateOfPickup.getYear()==Today.getYear() &&
-                           !request.expired){
-                               requestsToday.push({
-                                   address: request.addr1 + request.addr2,
-                                   lat:request.coordinates.lat,
-                                   lng:request.coordinates.lng
-                               });
-                           }
-                        requestsToday.push({
-                            address: request.addr1 + request.addr2,
-                            lat:request.coordinates.lat,
-                            lng:request.coordinates.lng
-                        });
-                           
-                    });
-
-                    
-                    requestsToday.push({
-                        address: factory.addr,
-                        lat:factory.coordinates.lat,
-                        lng:factory.coordinates.lng,
-                    });
-
-                    rxl.tour(requestsToday).then(data=>{
-                        const dataString = JSON.stringify(data);
-                        console.log(dataString);
-                    });
-                    res.render('adminUser',{requests:requests,factory:factory, requestsToday:requestsToday});
+                    PickUpPerson.find({assignedFactory:req.query.userID},(err,drivers)=>{
+                        if(err){
+                            console.log(err);
+                        }else{
+                            res.render('adminUser',{requests:requests,factory:factory,drivers:drivers});
+                        }
+                    })
                 }
             })
         }
@@ -433,9 +406,12 @@ app.post("/ppSignup",(req,res)=>{
 })
 
 app.post("/pickupPerson",(req,res)=>{
-    PickUpPerson.find({username:req.body.username},(err,user)=>{
+    PickUpPerson.findOne({username:req.body.username},(err,user)=>{
+        console.log(user);
         if(user){
+            console.log(req.body.password,user.password);
             if(req.body.password == user.password){
+                console.log(req.body.password,user.password);
                 res.redirect(`/ppUser/?userID=${user._id}`);
             }else{
                 res.redirect("/pickupPerson");

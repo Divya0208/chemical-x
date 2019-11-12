@@ -111,7 +111,7 @@
               
               <div class ="col">
                   <p class="lead text-center px-3">Your Drivers</p>
-                  <table>
+                  <table class="table">
                     <thead>
                       <tr>
                         <th>Name</th>
@@ -119,10 +119,10 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <% for(let i=0; i<driver.length;i++){ %>
+                      <% for(let i=0; i<drivers.length;i++){ %>
                         <tr>
-                          <td><% drivers[i].firstName + " " drivers[i].lastName %></td>
-                          <td><% drivers[i].username %></td>
+                          <td><%= drivers[i].firstName %> <%=drivers[i].lastName %></td>
+                          <td><%= drivers[i].username %></td>
                         </tr>
                       <% } %>  
 
