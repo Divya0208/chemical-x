@@ -98,8 +98,10 @@ const requestSchema = new mongoose.Schema({
         status:String,
         assignedFactory : String,
         assignedFactoryName: String,
+        assignedDriver: String,
         deliverySuccessful: Boolean,
         expired: Boolean
+
 })
 
 const ppSchema = new mongoose.Schema({
@@ -109,7 +111,25 @@ const ppSchema = new mongoose.Schema({
         addr: String,
         username: String,
         assignedFactory: String,
-        password:String
+        password:String,
+        requests:[{
+            dateOfPickup: Date,
+            requestId: String,
+            pickUpAddr: String,
+            coordinates:{
+                lat: String,
+                lng: String
+            },
+            oilQuantity: Number,
+            fboOilCost: Number,
+            factoryOilCost: Number,
+            pinCode: String,
+            username: String,
+            mobNo: String,
+            fboNumber: String,
+            assignedFactory: String,
+            assignedFactoryName: String
+        }]
 })
 
 userSchema.plugin(passportLocalMongoose);
@@ -159,7 +179,6 @@ app.get("/user",(req,res)=>{
             if(err){
                 console.log(err);
             }else{
-                console.log(requests);
                 res.render("fboUser",{requests:requests});
             }
         })
@@ -326,6 +345,7 @@ app.post("/newReq",(req,res)=>{
                             }
 
                             oilRequest.save(()=>{
+                                console.log(oilRequest);
                                 res.redirect("/user");
                             })
                         }
@@ -452,8 +472,85 @@ app.post("/acceptrequest",(req,res)=>{
             console.log(err);
         }else{
             foundRequest.status = 'Accepted';
-            foundRequest.save(()=>{
-                res.redirect(`/admin/user/?userID=${req.body.factoryId}`);
+            PickUpPerson.find({assignedFactory:foundRequest.assignedFactory},(err,drivers)=>{
+                let freqArray = [];
+                console.log(foundRequest.dateOfPickup);
+                for(let i=0;i<drivers.length;i++){
+                    let freq = 0;
+                    for(let j=0;j<drivers[i].requests.length;j++){
+                        if(foundRequest.dateOfPickup.getDate() == drivers[i].requests[j].dateOfPickup.getDate()&&
+                           foundRequest.dateOfPickup.getMonth() == drivers[i].requests[j].dateOfPickup.getMonth()&&
+                           foundRequest.dateOfPickup.getYear() == drivers[i].requests[j].dateOfPickup.getYear()
+                        ){
+                            freq++;
+                        }
+                    }
+                    freqArray.push(freq);
+                }
+
+                let tempFreq, tempDriver;
+                for(let i=0;i<freqArray.length;i++){
+                    for(let j=1;j<freqArray.length-i;j++){
+                        if(freqArray[j-1]<freqArray[j]){
+                            tempFreq=freqArray[j-1];
+                            freqArray[j-1]=freqArray[j];
+                            freqArray[j]=tempFreq;
+
+                            tempDriver = drivers[j-1];
+                            drivers[j-1] = drivers[j];
+                            drivers[j] = tempDriver;
+                        }
+                    }
+                }
+                console.log(drivers);
+                let i=0;
+                while(freqArray[i]>=5){
+                    i++;
+                }
+                drivers[i].requests.push({
+                    dateOfPickup: foundRequest.dateOfPickup,
+                    requestId: foundRequest._id,
+                    pickUpAddr: foundRequest.addr1 + foundRequest.addr2,
+                    coordinates:{
+                        lat: foundRequest.coordinates.lat,
+                        lng: foundRequest.coordinates.lng
+                    },
+                    oilQuantity: foundRequest.oilQuantity,
+                    fboOilCost: foundRequest.fboOilCost,
+                    factoryOilCost: foundRequest.factoryOilCost,
+                    pinCode: foundRequest.pinCode,
+                    username: foundRequest.username,
+                    mobNo: foundRequest.mobNo,
+                    fboNumber: foundRequest.fboNumber,
+                    assignedFactory: foundRequest.assignedFactory,
+                    assignedFactoryName: foundRequest.assignedFactoryName
+                })
+                
+                drivers[i].save(()=>{
+                    foundRequest.assignedDriver = drivers[i]._id;
+                    foundRequest.save(()=>{
+                        res.redirect(`/admin/user/?userID=${req.body.factoryId}`);
+                    })
+                })
+                /* drivers.forEach(driver=>{
+                    if(driver.requests.length<=5){
+                        driver.requests.push({
+                            dateOfPickup: foundRequest.dateOfPickup,
+                            requestId: foundRequest._id,
+                            pickUpAddr: foundRequest.addr1 + foundRequest.addr2,
+                            coordinates:{
+                                lat: foundRequest.coordinates.lat,
+                                lng: foundRequest.coordinates.lng
+                            }
+                        });
+                        driver.save(()=>{
+                            foundRequest.set('assignedDriver',`${driver._id}`);
+                            foundRequest.save(()=>{
+                                res.redirect(`/admin/user/?userID=${req.body.factoryId}`);
+                            })
+                        })
+                    }
+                }) */
             })
         }
     })
@@ -505,7 +602,6 @@ app.post('/notPickedUp',(req,res)=>{
 app.listen(3000, ()=>{
     console.log("Server running at port 3000");
 })
-
 
 
 //FACTORY DATA SEEDER
