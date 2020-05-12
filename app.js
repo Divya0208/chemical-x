@@ -1,4 +1,10 @@
+
+
+// start of file
+
+
 require('dotenv').config();
+const option  ="start";
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
